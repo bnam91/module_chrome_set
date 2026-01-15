@@ -5,7 +5,7 @@ const path = require('path');
 const { cleanIfNeeded, CLEAN_INTERVAL_MS } = require('./utils/chrome/cleanup');
 const { openExtraTab } = require('./utils/chrome/openExtraTab');
 const { readPathFromFile } = require('./utils/chrome/config');
-const { selectProfile, ensureProfileDirectory } = require('./utils/chrome/profile');
+const { selectProfile, ensureProfileDirectory, detectPrefixFromUrl } = require('./utils/chrome/profile');
 const { clearSingletonLocks } = require('./utils/chrome/locks');
 const { rl } = require('./utils/chrome/readline');
 const { setupCDP } = require('./utils/chrome/cdp');
@@ -24,6 +24,7 @@ async function openBrowser(options = {}) {
     profilePath = null,  // 프로필 경로 직접 지정 (옵션)
     url = 'https://www.naver.com',  // 새 탭에서 열 URL (기본값: naver.com)
     waitTime = 0,  // URL 이동 후 대기 시간(초) (기본값: 0)
+    profileFilter = null,  // 프로필 필터링 접두사 (선택사항, null이면 URL 기반 자동 감지)
   } = options;
   
   try {
@@ -65,8 +66,14 @@ async function openBrowser(options = {}) {
         throw new Error('대화형 입력이 불가능합니다. profileName, profilePath, 또는 useDefaultProfile 옵션을 사용하세요.');
       }
       
+      // 프로필 필터링: 명시적 필터가 있으면 사용, 없으면 URL 기반 자동 감지
+      let filterPrefix = profileFilter;
+      if (!filterPrefix && url) {
+        filterPrefix = detectPrefixFromUrl(url);
+      }
+      
       // 프로필 선택
-      selectedProfile = await selectProfile(userDataParent);
+      selectedProfile = await selectProfile(userDataParent, filterPrefix);
       if (!selectedProfile) {
         console.log("프로필을 선택할 수 없습니다. 프로그램을 종료합니다.");
         rl.close();

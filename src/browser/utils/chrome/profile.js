@@ -4,7 +4,7 @@
  * 목적: 크롬 브라우저 프로필을 생성, 조회, 선택하는 기능을 제공합니다.
  * 
  * 기능:
- * - 프로필 이름에 접두사 자동 추가 (google_, naver_)
+ * - 프로필 이름에 접두사 자동 추가 (google_, naver_, instagram_, youtube_)
  * - 사용 가능한 프로필 목록 조회
  * - 사용자에게 프로필 선택 또는 생성 요청
  * - 새 프로필 생성 시 유효성 검사 및 디렉토리 생성
@@ -16,7 +16,24 @@ const path = require('path');
 const { question } = require('./readline');
 
 // 허용하는 프로필 접두사
-const PROFILE_PREFIXES = ['google_', 'naver_'];
+const PROFILE_PREFIXES = ['google_', 'naver_', 'instagram_', 'youtube_'];
+
+/**
+ * URL에서 접두사 감지
+ * @param {string} url - URL 문자열
+ * @returns {string|null} 감지된 접두사 또는 null
+ */
+function detectPrefixFromUrl(url) {
+  if (!url) return null;
+  const urlLower = url.toLowerCase();
+  
+  if (urlLower.includes('instagram.com') || urlLower.includes('instagram')) return 'instagram_';
+  if (urlLower.includes('youtube.com') || urlLower.includes('youtube')) return 'youtube_';
+  if (urlLower.includes('naver.com') || urlLower.includes('naver')) return 'naver_';
+  if (urlLower.includes('google.com') || urlLower.includes('google')) return 'google_';
+  
+  return null;
+}
 
 /**
  * 프로필 이름에 기본 접두사(google_) 추가
@@ -49,9 +66,10 @@ function removeKnownPrefix(profileName) {
 /**
  * 사용 가능한 프로필 목록을 가져옴
  * @param {string} userDataParent - 사용자 데이터 부모 디렉토리 경로
+ * @param {string|null} filterPrefix - 필터링할 접두사 (선택사항)
  * @returns {Promise<string[]>} 프로필 이름 배열
  */
-async function getAvailableProfiles(userDataParent) {
+async function getAvailableProfiles(userDataParent, filterPrefix = null) {
   const profiles = [];
   
   try {
@@ -91,7 +109,14 @@ async function getAvailableProfiles(userDataParent) {
           }
           
           if ((hasDefault || hasProfile) && PROFILE_PREFIXES.some((p) => item.startsWith(p))) {
-            profiles.push(item);
+            // 필터링: 특정 접두사만 표시
+            if (filterPrefix) {
+              if (item.startsWith(filterPrefix)) {
+                profiles.push(item);
+              }
+            } else {
+              profiles.push(item);
+            }
           }
         }
       } catch {}
@@ -106,10 +131,16 @@ async function getAvailableProfiles(userDataParent) {
 /**
  * 사용자에게 프로필을 선택하도록 함
  * @param {string} userDataParent - 사용자 데이터 부모 디렉토리 경로
+ * @param {string|null} filterPrefix - 필터링할 접두사 (선택사항)
  * @returns {Promise<string|null>} 선택된 프로필 이름 또는 null
  */
-async function selectProfile(userDataParent) {
-  const profiles = await getAvailableProfiles(userDataParent);
+async function selectProfile(userDataParent, filterPrefix = null) {
+  const profiles = await getAvailableProfiles(userDataParent, filterPrefix);
+  
+  // 필터링된 경우 안내 메시지
+  if (filterPrefix && profiles.length > 0) {
+    console.log(`\n📌 ${filterPrefix} 접두사 프로필만 표시됩니다.`);
+  }
   
   if (profiles.length === 0) {
     console.log("\n사용 가능한 프로필이 없습니다.");
@@ -237,6 +268,7 @@ module.exports = {
   getAvailableProfiles,
   selectProfile,
   ensureProfileDirectory,
+  detectPrefixFromUrl,
   PROFILE_PREFIXES,
 };
 
