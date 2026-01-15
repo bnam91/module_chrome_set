@@ -86,13 +86,13 @@ module.exports = {
 ### 기본 사용 (모듈로 사용)
 
 ```javascript
-const { openCoupang } = require('module-chrome-set');
+const { openBrowser } = require('module-chrome-set');
 
 // 기본 실행
-openCoupang();
+openBrowser();
 
 // 추가 탭 열기 옵션
-openCoupang({ openExtraTab: true });
+openBrowser({ openExtraTab: true });
 ```
 
 ### 직접 실행
@@ -119,7 +119,7 @@ node test.js
 
 ## API
 
-### `openCoupang(options)`
+### `openBrowser(options)`
 
 크롬 브라우저를 지정된 프로필로 실행합니다.
 
@@ -151,36 +151,36 @@ node test.js
 
 **예시:**
 ```javascript
-const { openCoupang } = require('module-chrome-set');
+const { openBrowser } = require('module-chrome-set');
 
 // 기본 실행 (CLI 환경, 대화형 프로필 선택)
-await openCoupang();
+await openBrowser();
 
 // Electron/자동화 환경: 프로필 이름 직접 지정
-await openCoupang({ 
+await openBrowser({ 
   profileName: 'bnam91' 
 });
 
 // Chrome 기본 프로필 사용 (시스템 기본 Chrome 프로필)
 // ⚠️ 주의: Chrome이 실행 중이면 캐시 충돌 위험이 있습니다
-await openCoupang({ 
+await openBrowser({ 
   useDefaultProfile: true 
 });
 
 // 프로필 경로 직접 지정
-await openCoupang({ 
+await openBrowser({ 
   profilePath: '~/Documents/github_cloud/user_data/google_bnam91' 
 });
 
 // 커스텀 URL 및 대기 시간 지정
-await openCoupang({ 
+await openBrowser({ 
   profileName: 'bnam91',
   url: 'https://www.google.com',  // naver.com 대신 google.com 사용
   waitTime: 5  // 5초 대기
 });
 
 // 모든 옵션 사용
-await openCoupang({ 
+await openBrowser({ 
   profileName: 'bnam91',
   openExtraTab: true,
   useCDP: true,
@@ -192,7 +192,7 @@ await openCoupang({
 **Electron/서브모듈 사용 시:**
 ```javascript
 // 대화형 입력 없이 사용 (필수)
-const browser = await openCoupang({ 
+const browser = await openBrowser({ 
   profileName: 'bnam91',  // 또는 useDefaultProfile: true
   useCDP: true 
 });

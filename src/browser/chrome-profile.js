@@ -12,7 +12,7 @@ const { setupCDP } = require('./utils/chrome/cdp');
 const { findChromePath } = require('./utils/chrome/chromePath');
 const { getDefaultChromeProfilePath, getDefaultProfileName } = require('./utils/chrome/defaultProfile');
 
-async function openCoupang(options = {}) {
+async function openBrowser(options = {}) {
   let browser;
   
   // 옵션 파싱
@@ -205,9 +205,9 @@ if (process.stdin.isTTY) {
 
 // 스크립트 단독 실행 시 바로 실행
 if (require.main === module) {
-  openCoupang();
+  openBrowser();
 }
 
 // 모듈 사용 시 외부에서 실행할 수 있도록 export
-module.exports = { openCoupang };
+module.exports = { openBrowser };
 

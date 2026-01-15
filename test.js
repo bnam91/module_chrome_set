@@ -12,7 +12,7 @@
  * 5. 각 옵션별 동작 확인
  */
 
-const { openCoupang } = require('./index');
+const { openBrowser } = require('./index');
 const { findChromePath } = require('./src/browser/utils/chrome/chromePath');
 const { readPathFromFile } = require('./src/browser/utils/chrome/config');
 const { getAvailableProfiles } = require('./src/browser/utils/chrome/profile');
@@ -132,10 +132,10 @@ async function showChromeTestMenu() {
         if (profileChoiceNum >= 1 && profileChoiceNum <= profiles.length) {
           const selectedProfile = profiles[profileChoiceNum - 1];
           console.log(`\n🚀 크롬 실행 중... (프로필: ${selectedProfile})\n`);
-          await openCoupang({ profileName: selectedProfile });
+          await openBrowser({ profileName: selectedProfile });
         } else if (profileChoiceNum === profiles.length + 1) {
           console.log('\n🚀 크롬 실행 중... (대화형 프로필 생성)\n');
-          await openCoupang();
+          await openBrowser();
         } else {
           console.log('❌ 잘못된 번호입니다.\n');
           continue;
@@ -158,7 +158,7 @@ async function showChromeTestMenu() {
         if (profileChoiceNum >= 1 && profileChoiceNum <= profiles.length) {
           const selectedProfile = profiles[profileChoiceNum - 1];
           console.log(`\n🚀 크롬 실행 중... (프로필: ${selectedProfile})\n`);
-          await openCoupang({ profileName: selectedProfile });
+          await openBrowser({ profileName: selectedProfile });
         } else {
           console.log('❌ 잘못된 번호입니다.\n');
           continue;
@@ -167,14 +167,14 @@ async function showChromeTestMenu() {
       } else if (choiceNum === 3) {
         // Chrome 기본 프로필 사용
         console.log('\n🚀 크롬 실행 중... (Chrome 기본 프로필)\n');
-        await openCoupang({ useDefaultProfile: true });
+        await openBrowser({ useDefaultProfile: true });
         break;
       } else if (choiceNum === 4) {
         // 프로필 경로 직접 지정
         const customPath = await question('\n프로필 경로를 입력하세요: ');
         if (customPath.trim()) {
           console.log(`\n🚀 크롬 실행 중... (경로: ${customPath})\n`);
-          await openCoupang({ profilePath: customPath.trim() });
+          await openBrowser({ profilePath: customPath.trim() });
         } else {
           console.log('❌ 경로를 입력해주세요.\n');
           continue;
@@ -183,7 +183,7 @@ async function showChromeTestMenu() {
       } else if (choiceNum === 5) {
         // CDP 사용
         console.log('\n🚀 크롬 실행 중... (CDP 사용)\n');
-        await openCoupang({ useCDP: true });
+        await openBrowser({ useCDP: true });
         break;
       } else if (choiceNum === 6) {
         // 종료
