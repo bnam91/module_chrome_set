@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node test_scripts.js",
-    "dev": "node test_scripts.js"
+    "dev": "node test_scripts.js",
+    "test": "node test.js"
   },
   "keywords": [
     "puppeteer",

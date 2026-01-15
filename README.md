@@ -20,6 +20,7 @@
 - **백그라운드 네트워킹 비활성화**: 불필요한 데이터 저장 방지
 - **서비스 워커 비활성화**: 캐시 누적 방지
 - **자동화 감지 방지**: `--disable-blink-features=AutomationControlled` 옵션 적용
+- **크로스 플랫폼 지원**: macOS, Windows, Linux에서 Chrome 경로 자동 감지
 
 ### 4. 락 파일 관리
 - **자동 락 파일 정리**: 이전 실행에서 남은 락 파일 자동 제거
@@ -27,6 +28,8 @@
 
 ### 5. 자동 페이지 열기
 - **기본 페이지**: 구글, 네이버 자동 열기
+- **커스텀 URL**: `url` 옵션으로 새 탭에서 열 URL 지정 가능 (기본값: naver.com)
+- **대기 시간**: `waitTime` 옵션으로 URL 이동 후 대기 시간 지정 (초 단위)
 - **추가 탭 옵션**: `openExtraTab` 옵션으로 추가 탭 열기 가능
 
 ### 6. CDP 기반 자동화 탐지 방지 (옵션)
@@ -66,11 +69,17 @@ module.exports = {
 **참고:**
 - `~` 는 홈 디렉토리로 자동 확장됩니다
 - Mac: `~/Documents/github_cloud/user_data` → `/Users/a1/Documents/github_cloud/user_data`
-- Windows: `C:\Users\사용자명\Documents\user_data` (절대 경로 사용)
+- Windows: `~/Documents/github_cloud/user_data` → `C:\Users\a1\Documents\github_cloud\user_data`
+- Windows 백슬래시(`\`)도 슬래시(`/`)로 자동 변환됩니다
 
 ### 2. 프로필 생성
 
-프로그램 실행 시 프로필이 없으면 대화형으로 새 프로필을 생성할 수 있습니다.
+**CLI 환경 (기본):**
+- 프로그램 실행 시 프로필이 없으면 대화형으로 새 프로필을 생성할 수 있습니다.
+
+**Electron/자동화 환경:**
+- `profileName` 옵션으로 프로필을 직접 지정하거나 `useDefaultProfile: true`로 Chrome 기본 프로필을 사용하세요.
+- 대화형 입력이 불가능한 환경에서는 반드시 옵션을 지정해야 합니다.
 
 ## 사용법
 
@@ -89,15 +98,24 @@ openCoupang({ openExtraTab: true });
 ### 직접 실행
 
 ```bash
-# npm 스크립트로 실행
+# npm 스크립트로 실행 (크롬 실행 테스트)
 npm run dev
 
 # 또는 직접 실행
-node scripts.js
-
-# 또는 메인 모듈 직접 실행
-node src/browser/chrome-profile.js
+node test_scripts.js
 ```
+
+### 연결 테스트 (크롬 실행 없음)
+
+```bash
+# 각 기능이 제대로 연결되었는지 확인
+npm test
+
+# 또는 직접 실행
+node test.js
+```
+
+**주의**: `test.js`는 기능 연결 확인용 테스트 스크립트입니다. 실제 사용하기에는 적합하지 않습니다.
 
 ## API
 
@@ -109,6 +127,12 @@ node src/browser/chrome-profile.js
 - `options` (Object, 선택사항)
   - `openExtraTab` (Boolean): 추가 탭을 열지 여부 (기본값: `false`)
   - `useCDP` (Boolean): CDP를 사용한 강력한 자동화 탐지 방지 적용 여부 (기본값: `false`)
+  - `profileName` (String): 프로필 이름 직접 지정 (대화형 입력 생략, Electron/자동화 환경 권장)
+  - `profilePath` (String): 프로필 경로 직접 지정 (전체 경로)
+  - `useDefaultProfile` (Boolean): Chrome 기본 프로필 사용 (기본값: `false`)
+    - ⚠️ **주의**: Chrome이 실행 중이면 캐시 충돌 위험이 있습니다. 별도 프로필 사용을 권장합니다.
+  - `url` (String): 새 탭에서 열 URL (기본값: `'https://www.naver.com'`)
+  - `waitTime` (Number): URL 이동 후 대기 시간(초) (기본값: `0`)
 
 **옵션 설명:**
 
@@ -129,20 +153,52 @@ node src/browser/chrome-profile.js
 ```javascript
 const { openCoupang } = require('module-chrome-set');
 
-// 기본 실행 (가볍고 빠름)
+// 기본 실행 (CLI 환경, 대화형 프로필 선택)
 await openCoupang();
 
-// 추가 탭 포함 실행
-await openCoupang({ openExtraTab: true });
+// Electron/자동화 환경: 프로필 이름 직접 지정
+await openCoupang({ 
+  profileName: 'bnam91' 
+});
 
-// CDP 사용 (강력한 탐지 방지, 크롤링 등에 적합)
-await openCoupang({ useCDP: true });
+// Chrome 기본 프로필 사용 (시스템 기본 Chrome 프로필)
+// ⚠️ 주의: Chrome이 실행 중이면 캐시 충돌 위험이 있습니다
+await openCoupang({ 
+  useDefaultProfile: true 
+});
+
+// 프로필 경로 직접 지정
+await openCoupang({ 
+  profilePath: '~/Documents/github_cloud/user_data/google_bnam91' 
+});
+
+// 커스텀 URL 및 대기 시간 지정
+await openCoupang({ 
+  profileName: 'bnam91',
+  url: 'https://www.google.com',  // naver.com 대신 google.com 사용
+  waitTime: 5  // 5초 대기
+});
 
 // 모든 옵션 사용
 await openCoupang({ 
+  profileName: 'bnam91',
   openExtraTab: true,
+  useCDP: true,
+  url: 'https://www.google.com',  // 다른 URL 지정
+  waitTime: 5  // 5초 대기
+});
+```
+
+**Electron/서브모듈 사용 시:**
+```javascript
+// 대화형 입력 없이 사용 (필수)
+const browser = await openCoupang({ 
+  profileName: 'bnam91',  // 또는 useDefaultProfile: true
   useCDP: true 
 });
+
+// 브라우저 객체를 반환받아 직접 관리 가능
+// (CLI 환경이 아닐 경우 자동으로 브라우저 객체 반환)
 ```
 
 ## 프로젝트 구조

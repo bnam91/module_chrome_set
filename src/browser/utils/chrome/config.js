@@ -18,7 +18,7 @@ const os = require('os');
  * @returns {string} 사용자 데이터 디렉토리 경로
  */
 function readPathFromFile() {
-  const configPath = path.join(__dirname, '..', 'config', 'config.js');
+  const configPath = path.join(__dirname, '..', '..', 'config', 'config.js');
   
   try {
     // config.js 파일 로드
@@ -39,10 +39,19 @@ function readPathFromFile() {
       process.exit(1);
     }
     
+    // Windows 백슬래시를 슬래시로 정규화
+    pathValue = pathValue.replace(/\\/g, '/');
+    
     // ~ 를 홈 디렉토리로 확장
     if (pathValue.startsWith('~/') || pathValue === '~') {
       const homeDir = os.homedir();
-      pathValue = pathValue.replace(/^~/, homeDir);
+      // Windows에서는 백슬래시로 변환
+      if (process.platform === 'win32') {
+        pathValue = pathValue.replace(/^~/, homeDir.replace(/\\/g, '/'));
+        pathValue = pathValue.replace(/\//g, '\\');
+      } else {
+        pathValue = pathValue.replace(/^~/, homeDir);
+      }
     }
     
     return pathValue;
