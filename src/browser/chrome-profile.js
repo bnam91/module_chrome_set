@@ -8,9 +8,16 @@ const { readPathFromFile } = require('./utils/config');
 const { selectProfile, ensureProfileDirectory } = require('./utils/profile');
 const { clearSingletonLocks } = require('./utils/locks');
 const { rl } = require('./utils/readline');
+const { setupCDP } = require('./utils/cdp');
 
 async function openCoupang(options = {}) {
   let browser;
+  
+  // 옵션 파싱
+  const {
+    openExtraTab = false,
+    useCDP = false,  // CDP 사용 여부 (기본값: false)
+  } = options;
   
   try {
     // 사용자 프로필 경로 설정 (config.txt에서 읽기)
@@ -67,6 +74,11 @@ async function openCoupang(options = {}) {
     // 첫 번째 페이지 사용
     const pages = await browser.pages();
     const page = pages[0];
+
+    // CDP 설정 적용 (옵션)
+    if (useCDP) {
+      await setupCDP(page, browser);
+    }
 
     // 14일 단위 캐시/쿠키 청소 (로그인 세션이 만료될 수 있음)
     const cleaned = await cleanIfNeeded(userDataDir, page);
