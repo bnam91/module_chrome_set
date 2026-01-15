@@ -1,0 +1,23 @@
+{
+  "name": "mac-chomeset",
+  "version": "1.0.0",
+  "description": "크롬 자동 실행 스크립트",
+  "main": "chrome.js",
+  "scripts": {
+    "start": "node chrome.js",
+    "start:secret": "node chrome-secret.js",
+    "name": "node src/browser/chrome-profile.js",
+    "dev": "node scripts.js"
+  },
+  "keywords": [
+    "puppeteer",
+    "coupang",
+    "automation"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "puppeteer": "^21.5.0"
+  }
+}
+

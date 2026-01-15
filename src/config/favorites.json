@@ -1,0 +1,22 @@
+[
+  {
+    "name": "네이버 판매자센터",
+    "url": "https://sell.smartstore.naver.com/#/home/dashboard"
+  },
+  {
+    "name": "네이버 상품 Q&A",
+    "url": "https://sell.smartstore.naver.com/#/comment/"
+  },
+  {
+    "name": "네이버 고객문의 관리",
+    "url": "https://sell.smartstore.naver.com/#/naverpay/qnas?treatmentStatus="
+  },
+  {
+    "name": "네이버 톡톡",
+    "url": "https://sell.smartstore.naver.com/#/talktalk/chat?filter.read=unread"
+  },
+  {
+    "name": "네이버 문의관리",
+    "url": "https://sell.smartstore.naver.com/#/comment/"
+  }
+]
