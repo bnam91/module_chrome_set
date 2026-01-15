@@ -157,9 +157,8 @@ async function selectProfile(userDataParent) {
   
   console.log("\n사용 가능한 프로필 목록:");
   profiles.forEach((profile, idx) => {
-    // 표시할 때는 google_ 접두사 제거
-    const displayName = removeKnownPrefix(profile);
-    console.log(`${idx + 1}. ${displayName}`);
+    // 접두사 포함하여 표시
+    console.log(`${idx + 1}. ${profile}`);
   });
   console.log(`${profiles.length + 1}. 새 프로필 생성`);
   
@@ -170,8 +169,7 @@ async function selectProfile(userDataParent) {
       
       if (1 <= choice && choice <= profiles.length) {
         const selectedProfile = profiles[choice - 1];
-        const displayName = removeKnownPrefix(selectedProfile);
-        console.log(`\n선택된 프로필: ${displayName}`);
+        console.log(`\n선택된 프로필: ${selectedProfile}`);
         return selectedProfile; // 실제 프로필 이름(접두사 포함) 반환
       } else if (choice === profiles.length + 1) {
         // 새 프로필 생성

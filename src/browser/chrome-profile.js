@@ -15,12 +15,12 @@ async function openCoupang(options = {}) {
   
   // 옵션 파싱
   const {
-    openExtraTab = false,
+    openExtraTab: shouldOpenExtraTab = false,
     useCDP = false,  // CDP 사용 여부 (기본값: false)
   } = options;
   
   try {
-    // 사용자 프로필 경로 설정 (config.txt에서 읽기)
+    // 사용자 프로필 경로 설정 (config.js에서 읽기)
     const userDataParent = readPathFromFile();
     
     // 프로필 선택
@@ -80,11 +80,11 @@ async function openCoupang(options = {}) {
       await setupCDP(page, browser);
     }
 
-    // 14일 단위 캐시/쿠키 청소 (로그인 세션이 만료될 수 있음)
+    // 14일 단위 캐시 청소 (쿠키는 유지하여 로그인 정보 보존)
     const cleaned = await cleanIfNeeded(userDataDir, page);
     if (cleaned) {
       const days = Math.round(CLEAN_INTERVAL_MS / (1000 * 60 * 60 * 24));
-      console.log(`🧹 ${days}일 주기 청소 완료 (캐시/쿠키 및 디스크 캐시 삭제).`);
+      console.log(`🧹 ${days}일 주기 청소 완료 (캐시 및 디스크 캐시 삭제, 로그인 정보 유지).`);
     }
 
     // 구글로 이동
@@ -95,7 +95,7 @@ async function openCoupang(options = {}) {
     await newPage.goto('https://www.naver.com');
 
     // scripts.js에서 실행했을 때만 추가 새 탭 열기
-    if (options.openExtraTab) {
+    if (shouldOpenExtraTab) {
       await openExtraTab(browser);
     }
 

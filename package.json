@@ -4,8 +4,8 @@
   "description": "크롬 자동 실행 스크립트 모듈",
   "main": "index.js",
   "scripts": {
-    "start": "node scripts.js",
-    "dev": "node scripts.js"
+    "start": "node test_scripts.js",
+    "dev": "node test_scripts.js"
   },
   "keywords": [
     "puppeteer",

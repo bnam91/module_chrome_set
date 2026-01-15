@@ -1,13 +1,14 @@
 /**
- * 브라우저 캐시 및 쿠키 정리 유틸리티
+ * 브라우저 캐시 정리 유틸리티
  * 
- * 목적: 주기적으로 브라우저 캐시와 쿠키를 정리하여 디스크 공간을 절약하고
+ * 목적: 주기적으로 브라우저 캐시를 정리하여 디스크 공간을 절약하고
  *       브라우저 성능을 유지합니다.
  * 
  * 기능:
  * - 14일 주기로 자동 정리 (CLEAN_INTERVAL_MS)
- * - 브라우저 쿠키 및 캐시 삭제
+ * - 브라우저 캐시 삭제 (쿠키는 기본적으로 유지하여 로그인 정보 보존)
  * - 디스크 캐시 디렉토리 삭제 (Cache, Code Cache, Service Worker CacheStorage)
+ * - 옵션으로 쿠키 삭제 가능 (keepLogin=false)
  * - 마지막 정리 시간을 마커 파일로 추적
  */
 
@@ -43,10 +44,17 @@ async function writeLastCleaned(profileDir, timestamp) {
   await fsPromises.writeFile(markerPath, JSON.stringify({ lastCleaned: timestamp }), 'utf-8');
 }
 
-async function clearBrowserData(page) {
+async function clearBrowserData(page, keepLogin = true) {
   const client = await page.target().createCDPSession();
-  await client.send('Network.clearBrowserCookies');
+  
+  // 캐시는 항상 삭제
   await client.send('Network.clearBrowserCache');
+  
+  // 쿠키는 기본적으로 유지 (로그인 정보 보존)
+  // keepLogin=false일 때만 쿠키 삭제
+  if (!keepLogin) {
+    await client.send('Network.clearBrowserCookies');
+  }
 }
 
 async function clearDiskCaches(profileDir) {
@@ -60,14 +68,14 @@ async function clearDiskCaches(profileDir) {
   }
 }
 
-async function cleanIfNeeded(profileDir, page) {
+async function cleanIfNeeded(profileDir, page, keepLogin = true) {
   const lastCleaned = await readLastCleaned(profileDir);
   const now = Date.now();
   if (now - lastCleaned < CLEAN_INTERVAL_MS) {
     return false;
   }
 
-  await clearBrowserData(page);
+  await clearBrowserData(page, keepLogin);
   await clearDiskCaches(profileDir);
   await writeLastCleaned(profileDir, now);
   return true;

@@ -54,17 +54,19 @@ git submodule add https://github.com/bnam91/module_chrome_set [경로]
 
 ### 1. 프로필 경로 설정
 
-`src/browser/config/config.txt` 파일에 크롬 프로필이 저장될 경로를 설정합니다.
+`src/browser/config/config.js` 파일에 크롬 프로필이 저장될 경로를 설정합니다.
 
-**Mac 예시:**
-```
-/Users/a1/Documents/github/user_data
+**예시:**
+```javascript
+module.exports = {
+  profilePath: '~/Documents/github_cloud/user_data',
+};
 ```
 
-**Windows 예시:**
-```
-C:\Users\사용자명\Desktop\github\user_data
-```
+**참고:**
+- `~` 는 홈 디렉토리로 자동 확장됩니다
+- Mac: `~/Documents/github_cloud/user_data` → `/Users/a1/Documents/github_cloud/user_data`
+- Windows: `C:\Users\사용자명\Documents\user_data` (절대 경로 사용)
 
 ### 2. 프로필 생성
 
@@ -154,7 +156,7 @@ module-chrome-set/
 │   ├── browser/
 │   │   ├── chrome-profile.js   # 메인 모듈
 │   │   ├── config/
-│   │   │   └── config.txt      # 프로필 경로 설정
+│   │   │   └── config.js       # 프로필 경로 설정
 │   │   └── utils/
 │   │       ├── cleanup.js      # 캐시/쿠키 정리
 │   │       ├── config.js       # 설정 파일 읽기
