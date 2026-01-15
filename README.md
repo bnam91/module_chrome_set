@@ -162,8 +162,6 @@ module-chrome-set/
 │   │       ├── openExtraTab.js # 추가 탭 열기
 │   │       ├── profile.js      # 프로필 관리
 │   │       └── readline.js     # 사용자 입력 처리
-│   └── config/
-│       └── favorites.json      # 즐겨찾기 URL (향후 기능)
 ```
 
 ## 주요 기능 상세
