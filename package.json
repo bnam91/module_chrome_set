@@ -1,7 +1,7 @@
 {
   "name": "module-chrome-set",
-  "version": "1.0.0",
-  "description": "크롬 자동 실행 스크립트 모듈",
+  "version": "1.1.0",
+  "description": "크롬 브라우저를 프로필별로 자동 실행하고 관리하는 Node.js 모듈",
   "main": "index.js",
   "scripts": {
     "start": "node test_scripts.js",
@@ -13,10 +13,25 @@
     "chrome",
     "automation",
     "browser",
-    "profile"
+    "profile",
+    "selenium",
+    "webdriver",
+    "headless"
   ],
   "author": "",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bnam91/module_chrome_set.git"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "files": [
+    "index.js",
+    "src/",
+    "README.md"
+  ],
   "dependencies": {
     "puppeteer": "^21.5.0"
   }
