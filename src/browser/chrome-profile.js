@@ -25,6 +25,7 @@ async function openBrowser(options = {}) {
     url = 'https://www.naver.com',  // 새 탭에서 열 URL (기본값: naver.com)
     waitTime = 0,  // URL 이동 후 대기 시간(초) (기본값: 0)
     profileFilter = null,  // 프로필 필터링 접두사 (선택사항, null이면 URL 기반 자동 감지)
+    returnBrowser = false,  // CLI 환경에서도 브라우저 객체 반환
   } = options;
   
   try {
@@ -170,7 +171,7 @@ async function openBrowser(options = {}) {
 
     // 브라우저 객체 반환 (서브모듈 사용 시)
     // 무한 대기는 CLI 환경에서만 필요
-    if (process.stdin.isTTY) {
+    if (process.stdin.isTTY && !returnBrowser) {
       // 브라우저 종료 감지 (CLI 환경)
       browser.on('disconnected', () => {
         console.log('브라우저가 닫혔습니다.');
@@ -179,10 +180,10 @@ async function openBrowser(options = {}) {
       
       // 무한 대기 (CLI 환경)
       await new Promise(() => {});
-    } else {
-      // 서브모듈 사용 시 브라우저 객체 반환
-      return browser;
     }
+
+    // 서브모듈 사용 시 브라우저 객체 반환
+    return browser;
 
   } catch (error) {
     console.error('오류:', error.message);
